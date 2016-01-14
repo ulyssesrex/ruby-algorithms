@@ -49,7 +49,7 @@ def get_line
 	gets.strip.split(" ").map(&:to_i)
 end
 
-def result_value(threshold_value, arrival_times_array)
+def result_string(threshold_value, arrival_times_array)
 	 students_on_time(arrival_times_array) >= threshold_value ? "YES" : "NO"
 end
 
@@ -62,5 +62,5 @@ test_cases = get_test_cases_number
 test_cases.times do
 	threshold_value = get_line.last
 	arrival_times   = get_line
-	puts result_value(threshold_value, arrival_times)
+	puts result_string(threshold_value, arrival_times)
 end
