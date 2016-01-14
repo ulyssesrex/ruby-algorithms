@@ -49,12 +49,12 @@ def get_line
 	gets.strip.split(" ").map(&:to_i)
 end
 
-def result_string(threshold_value, arrival_times_array)
-	 students_on_time(arrival_times_array) >= threshold_value ? "NO" : "YES"
-end
-
 def students_on_time(arrival_times_array)
 	arrival_times_array.select { |time| time <= 0 }.length
+end
+
+def result_string(threshold_value, arrival_times_array)
+	 students_on_time(arrival_times_array) >= threshold_value ? "NO" : "YES"
 end
 
 test_cases = get_test_cases_number
