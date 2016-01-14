@@ -50,7 +50,7 @@ def get_line
 end
 
 def result_string(threshold_value, arrival_times_array)
-	 students_on_time(arrival_times_array) >= threshold_value ? "YES" : "NO"
+	 students_on_time(arrival_times_array) >= threshold_value ? "NO" : "YES"
 end
 
 def students_on_time(arrival_times_array)
