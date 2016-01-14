@@ -41,54 +41,26 @@ have entered before the class started.
 	
 =end
 
-
-
-
-
-
-
-
-
-
-
-def get_input
-	gets.strip.split(" ").map { |n| n.to_i } # pretzel operator
-end
-
-def get_test_cases
+def get_test_cases_number
 	gets.strip.to_i
 end
 
-test_cases = get_test_cases
-
-
-
-user_input = []
-
-test_cases.times do |i|
-	user_input << [] 
-	2.times { user_input[i] << process_input }
+def get_line
+	gets.strip.split(" ").map(&:to_i)
 end
 
-cancellations = []
-
-test_cases.times do |i|
-	total = user_input[i][0].first
-	min   = user_input[i][0].last
-	times = user_input[i][1]
-	count = 0
-
-	times.each do |time|
-		count += 1 if time <= 0
-	end
-
-	if count >= min
-		cancellations << "NO"
-	else
-		cancellations << "YES"
-	end
+def result_value(threshold_value, arrival_times_array)
+	 students_on_time(arrival_times_array) >= threshold_value ? "YES" : "NO"
 end
 
-cancellations.each do |c|
-	puts c
+def students_on_time(arrival_times_array)
+	arrival_times_array.select { |time| time <= 0 }.length
+end
+
+
+test_cases = get_test_cases_number
+test_cases.times do
+	threshold_value = get_line.last
+	arrival_times   = get_line
+	puts result_value(threshold_value, arrival_times)
 end
