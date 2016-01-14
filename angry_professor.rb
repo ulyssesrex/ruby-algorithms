@@ -57,7 +57,6 @@ def students_on_time(arrival_times_array)
 	arrival_times_array.select { |time| time <= 0 }.length
 end
 
-
 test_cases = get_test_cases_number
 test_cases.times do
 	threshold_value = get_line.last
