@@ -1,5 +1,7 @@
 =begin
 
+Angry Professor
+
 From https://www.hackerrank.com/challenges/angry-professor
 	
 A Discrete Mathematics professor has a class of N students. Frustrated with

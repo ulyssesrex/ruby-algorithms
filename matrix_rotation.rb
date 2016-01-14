@@ -1,10 +1,10 @@
 =begin
 
-Matrix Rotation Problem
+Matrix Rotation
 
-https://www.hackerrank.com/challenges/matrix-rotation-algo
+From https://www.hackerrank.com/challenges/matrix-rotation-algo
 
-You are given a 2D matrix, a, of dimension MxN and a positive integer R. You
+You are given a 2D matrix, a, of dimensions (MxN) and a positive integer R. You
 have to rotate the matrix R times and print the resultant matrix. Rotation
 should be in anti-clockwise direction.
 
@@ -33,6 +33,46 @@ Accepts STDIN string in format 'N{1} N{2} N{3}'
 and returns array of integers.
 
 =end
+
+def get_line
+	gets.strip.split(" ").map(&:to_i)
+end
+
+def get_matrix
+	matrix_params = get_line
+	rows, columns, rotations = matrix_params[0], matrix_params[1], matrix_params[2]
+	matrix = []
+	rows.times do
+		matrix << get_line
+	end
+	matrix
+end
+
+class	MyMatrix
+
+	def initialize(two_dimensional_array)
+		@my_matrix = two_dimensional_array
+		@rows      = @my_matrix.length
+		@columns   = @my_matrix.first.length
+		@smallest_axis_length = smallest_axis_length(rows, columns)
+	end
+
+	def smallest_axis_length(rows, columns)
+		[rows, columns].min
+	end
+end
+
+
+matrix = get_matrix
+my_matrix = MyMatrix.new(matrix)
+puts my_matrix.rotate(rotations)
+
+
+
+
+
+
+
 
 def gets_integers
 	gets.strip.split(" ").map { |n| n.to_i }
