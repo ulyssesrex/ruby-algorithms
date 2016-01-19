@@ -165,7 +165,7 @@ params_array = get_line
 parameters   = MatrixParameters.new(params_array)
 
 matrix_data = get_matrix(parameters)
-row_length  = parameters.rows
+row_length  = parameters.columns
 my_matrix   = MyMatrix.new(matrix_data)
 
 rotations = parameters.rotations
