@@ -46,9 +46,8 @@ def get_matrix(parameters_object)
 	matrix
 end
 
-def put_matrix(matrix)
-	# TODO: is each_slice necessary? If matrix is already 2D, then no.
-	matrix.each_slice(matrix.columns) do |slice|
+def put_matrix(matrix, slice_length)
+	matrix.each_slice(slice_length) do |slice|
 		puts slice.join(" ")
 	end
 end
@@ -63,10 +62,10 @@ end
 
 class MyMatrix < Array
 
-	def initialize(parameters_object, two_dimensional_array)
+	def initialize(two_dimensional_array)
 		@matrix  = two_dimensional_array
-		@rows    = parameters_object.rows
-		@columns = parameters_object.columns
+		@rows    = two_dimensional_array.length
+		@columns = two_dimensional_array.first.length
 		@entries = @rows * @columns
 	end
 
@@ -106,7 +105,7 @@ class MyMatrix < Array
 		current_row = current_column = offset = level
 		while aggregator.length < ring_circumference(level)
 			index = current_row * @columns + current_column
-			value = @my_matrix[current_row][current_column]
+			value = @matrix[current_row][current_column]
 			aggregator.push(indices_only ? index : value)
 			case ring_side(current_row, current_column, level)
 			when :left
@@ -121,6 +120,7 @@ class MyMatrix < Array
 		end
 		aggregator
 	end
+
 
 	private
 
@@ -138,10 +138,10 @@ class MyMatrix < Array
 		when column - ring_level <= 0 && row + ring_level + 1 < @rows
 			:left
 		# When on bottom but not on right side
-		when row + ring_level + 1 >= @rows && column + ring_level < @columns
+		when row + ring_level + 1 >= @rows && column + ring_level + 1 < @columns
 			:bottom
 		# When on right side but not on top
-		when column + ring_level >= @columns && row - ring_level - 1 >= 0
+		when column + ring_level + 1 >= @columns && row - ring_level - 1 >= 0
 			:right
 		# The top side remains
 		else
@@ -149,18 +149,26 @@ class MyMatrix < Array
 		end			
 	end
 
+=begin
+	1l 2t 3t 4t
+	5l 6l 7t 8r
+	1l 2b 3r 4r
+	5b 6b 7b 8r	
+=end
+
 	def ring_circumference(level)
 		((@rows - 2 * level) * 2) + (2 * ((@columns - 2 * level) - 2))
 	end
 end
 
 params_array = get_line
-parameters = MatrixParameters.new(params_array)
+parameters   = MatrixParameters.new(params_array)
 
 matrix_data = get_matrix(parameters)
-my_matrix = MyMatrix.new(parameters, matrix_data)
+row_length  = parameters.rows
+my_matrix   = MyMatrix.new(matrix_data)
 
 rotations = parameters.rotations
 rotated_matrix = my_matrix.rotate(rotations)
 
-put_matrix(rotated_matrix)
+put_matrix(rotated_matrix, row_length)
