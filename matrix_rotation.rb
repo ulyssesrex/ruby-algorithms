@@ -46,9 +46,9 @@ def get_matrix(parameters_object)
 	matrix
 end
 
-def put_matrix(matrix, slice_length)
-	matrix.each_slice(slice_length) do |slice|
-		puts slice.join(" ")
+def put_matrix(matrix, row_length)
+	matrix.each_slice(row_length) do |row|
+		puts row.join(" ")
 	end
 end
 
