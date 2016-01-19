@@ -121,7 +121,6 @@ class MyMatrix < Array
 		aggregator
 	end
 
-
 	private
 
 	def ring_level_max(rows, columns)
@@ -149,14 +148,7 @@ class MyMatrix < Array
 		end			
 	end
 
-=begin
-	1l 2t 3t 4t
-	5l 6l 7t 8r
-	1l 2b 3r 4r
-	5b 6b 7b 8r	
-=end
-
-	def ring_circumference(level)
+def ring_circumference(level)
 		((@rows - 2 * level) * 2) + (2 * ((@columns - 2 * level) - 2))
 	end
 end
