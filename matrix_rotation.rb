@@ -34,24 +34,6 @@ and returns array of integers.
 
 =end
 
-def get_line
-	gets.strip.split(" ").map(&:to_i)
-end
-
-def get_matrix(parameters_object)
-	matrix = []
-	parameters_object.rows.times do
-		matrix << get_line
-	end
-	matrix
-end
-
-def put_matrix(matrix, row_length)
-	matrix.each_slice(row_length) do |row|
-		puts row.join(" ")
-	end
-end
-
 class MatrixParameters
 	attr_accessor :rows, :columns, :rotations
 
@@ -61,7 +43,6 @@ class MatrixParameters
 end
 
 class MyMatrix < Array
-
 	def initialize(two_dimensional_array)
 		@matrix  = two_dimensional_array
 		@rows    = two_dimensional_array.length
@@ -88,9 +69,9 @@ class MyMatrix < Array
 		rotated_matrix
 	end
 
-	# Returns a ring of values (array), from a 2D matrix, at specified level.
-	# 'Level' refers to how deeply the ring is nested inside other rings.
-	# If @matrix = 
+  # Returns a ring of values (array), from a 2D matrix, at specified level.
+  # 'Level' refers to how deeply the ring is nested inside other rings.
+  # If @matrix = 
   # [[ 2,  3,  5,  7], 
   #  [11, 13, 19, 23],
   #  [29, 31, 37, 41],
@@ -148,8 +129,26 @@ class MyMatrix < Array
 		end			
 	end
 
-def ring_circumference(level)
+	def ring_circumference(level)
 		((@rows - 2 * level) * 2) + (2 * ((@columns - 2 * level) - 2))
+	end
+end
+
+def get_line
+	gets.strip.split(" ").map(&:to_i)
+end
+
+def get_matrix(parameters_object)
+	matrix = []
+	parameters_object.rows.times do
+		matrix << get_line
+	end
+	matrix
+end
+
+def put_matrix(matrix, row_length)
+	matrix.each_slice(row_length) do |row|
+		puts row.join(" ")
 	end
 end
 
