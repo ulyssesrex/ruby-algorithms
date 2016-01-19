@@ -38,125 +38,129 @@ def get_line
 	gets.strip.split(" ").map(&:to_i)
 end
 
-def get_matrix
-	matrix_params = get_line
-	rows, columns, rotations = matrix_params[0], matrix_params[1], matrix_params[2]
+def get_matrix(parameters_object)
 	matrix = []
-	rows.times do
+	parameters_object.rows.times do
 		matrix << get_line
 	end
 	matrix
 end
 
-class	MyMatrix
-
-	def initialize(two_dimensional_array)
-		@my_matrix = two_dimensional_array
-		@rows      = @my_matrix.length
-		@columns   = @my_matrix.first.length
-		@smallest_axis_length = smallest_axis_length(rows, columns)
-	end
-
-	def smallest_axis_length(rows, columns)
-		[rows, columns].min
+def put_matrix(matrix)
+	# TODO: is each_slice necessary? If matrix is already 2D, then no.
+	matrix.each_slice(matrix.columns) do |slice|
+		puts slice.join(" ")
 	end
 end
 
+class MatrixParameters
+	attr_accessor :rows, :columns, :rotations
 
-matrix = get_matrix
-my_matrix = MyMatrix.new(matrix)
-puts my_matrix.rotate(rotations)
-
-
-
-
-
-
-
-
-def gets_integers
-	gets.strip.split(" ").map { |n| n.to_i }
-end
-
-params_input = gets_integers
-
-# rows_n      = params_input[0]
-# columns_n   = params_input[1]
-# rotations_n = params_input[2]
-
-def parameters(params_input)
-	p = {}
-	p[:rows_n]      = params_input[0]
-	p[:columns_n]   = params_input[1]
-  p[:rotations_n] = params_input[2]
-  p
-end
-
-def smallest_axis_length(parameters)
-	if parameters[:rows_n] < parameters[:columns_n]
-		parameters[:rows_n]
-	else
-		parameters[:columns_n]
+	def initialize(parameters_array)
+		@rows, @columns, @rotations = *parameters_array		
 	end
 end
-# smallest_axis_n = rows_n < columns_n ? rows_n : columns_n
-def circles_max(parameters)
-	smallest_axis_length / 2
-end
 
-# circles_max = smallest_axis_n / 2
+class MyMatrix < Array
 
-matrix = []
-parameters[:rows_n].times do |n|
-	row = gets.strip.split(" ")
-	matrix << row
-end
-
-circle_index = 0
-matrix_size  = rows_n * columns_n
-
-circles = []
-indices = []
-while circle_index < circles_max
-	circles << []
-	pad = circle_index
-	row = col = 0 + pad
-	while matrix[row + pad + 1]
-		circles.last << matrix[row][col]
-		indices << (row * columns_n) + col
-		row += 1
+	def initialize(parameters_object, two_dimensional_array)
+		@matrix  = two_dimensional_array
+		@rows    = parameters_object.rows
+		@columns = parameters_object.columns
+		@entries = @rows * @columns
 	end
-	while matrix[row + pad][col + pad + 1]
-		circles.last << matrix[row][col]
-		indices << (row * columns_n) + col
-		col += 1
+
+	def rotate(rotations_n)
+		ring_levels = (0..ring_level_max(@rows, @columns))
+		indices = []
+		values  = []
+		ring_levels.each do |level|
+			ring_indices = self.outer_ring(level, indices_only: true)
+			indices.push(ring_indices)
+			ring_values = self.outer_ring(level)
+			rotated_values = ring_values.rotate(-rotations_n)
+			values.push(rotated_values)
+		end
+		indices.flatten!; values.flatten!
+		rotated_matrix = []
+		@entries.times do |index|
+			rotated_matrix[indices[index]] = values[index]
+		end
+		rotated_matrix
 	end
-	while row - pad > 0
-		circles.last << matrix[row][col]
-		indices << (row * columns_n) + col
-		row -= 1
+
+	# Returns a ring of values (array), from a 2D matrix, at specified level.
+	# 'Level' refers to how deeply the ring is nested inside other rings.
+	# If @matrix = 
+  # [[ 2,  3,  5,  7], 
+  #  [11, 13, 19, 23],
+  #  [29, 31, 37, 41],
+  #  [43, 47, 53, 59],
+  #  [61, 67, 71, 73]]
+  # then
+  # @matrix.outer_ring(0) => [2, 11, 29, 43, 61, 67, 71, 73, 59 ... etc]
+  # @matrix.outer_ring(1) => [13, 31, 47, 53, 37, 19]
+  # @matrix.outer_ring(2) => []
+	def outer_ring(level, indices_only: false)
+		aggregator = []
+		current_row = current_column = offset = level
+		while aggregator.length < ring_circumference(level)
+			index = current_row * @columns + current_column
+			value = @my_matrix[current_row][current_column]
+			aggregator.push(indices_only ? index : value)
+			case ring_side(current_row, current_column, level)
+			when :left
+				current_row += 1
+			when :bottom
+				current_column += 1
+			when :right
+				current_row -= 1
+			when :top
+				current_column -= 1
+			end
+		end
+		aggregator
 	end
-	while col - pad > 0
-		circles.last << matrix[row][col]
-		indices << (row * columns_n) + col
-		col -= 1
+
+	private
+
+	def ring_level_max(rows, columns)
+		[rows, columns].min / 2 - 1
 	end
-	circle_index += 1
+
+	def number_of_entries(rows, columns)
+		rows * columns
+	end
+
+	def ring_side(row, column, ring_level)
+		case
+		# When on left side but not on bottom
+		when column - ring_level <= 0 && row + ring_level + 1 < @rows
+			:left
+		# When on bottom but not on right side
+		when row + ring_level + 1 >= @rows && column + ring_level < @columns
+			:bottom
+		# When on right side but not on top
+		when column + ring_level >= @columns && row - ring_level - 1 >= 0
+			:right
+		# The top side remains
+		else
+			:top
+		end			
+	end
+
+	def ring_circumference(level)
+		((@rows - 2 * level) * 2) + (2 * ((@columns - 2 * level) - 2))
+	end
 end
 
-circles.each do |circle|
-	circle.rotate!(-rotations_n)
-end
+params_array = get_line
+parameters = MatrixParameters.new(params_array)
 
-circles.flatten!
+matrix_data = get_matrix(parameters)
+my_matrix = MyMatrix.new(parameters, matrix_data)
 
-rotated_matrix = Array.new(matrix_size)
-i = 0
-while i < matrix_size
-	rotated_matrix[indices[i]] = circles[i]
-	i += 1
-end
+rotations = parameters.rotations
+rotated_matrix = my_matrix.rotate(rotations)
 
-rotated_matrix.each_slice(columns_n) do |slice|
-	puts slice.join(" ")
-end
+put_matrix(rotated_matrix)
